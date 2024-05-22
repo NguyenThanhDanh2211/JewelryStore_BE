@@ -1,5 +1,15 @@
-const app = require('./app');
+const express = require('express');
+const cors = require('cors');
 
-const port = 3000;
+const app = express();
 
-app.listen(port, () => console.log(`App listen at http://localhost:${port}`));
+app.use(cors());
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Welcome to Jewelry Store.' });
+});
+
+const PORT = 3000;
+
+app.listen(PORT, () => console.log(`App listen at http://localhost:${PORT}`));
