@@ -7,7 +7,7 @@ app.use(cors());
 const PORT = 3000;
 
 // Connect DB
-const db = require('./src/config/db/index');
+const db = require('./config/db');
 db.connect();
 
 app.use(express.json());
