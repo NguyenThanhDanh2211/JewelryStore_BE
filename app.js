@@ -1,10 +1,35 @@
 const express = require('express');
 const cors = require('cors');
+const session = require('express-session');
+const passport = require('passport');
+const crypto = require('crypto');
+
+require('dotenv').config();
 
 const route = require('./src/routes');
+const passportSetup = require('./src/utils/passport');
 
 const app = express();
-app.use(cors());
+
+app.use(
+  session({
+    secret: crypto.randomBytes(20).toString('hex'),
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    methods: 'GET, POST, PUT, DELETE',
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 app.get('/', (req, res) => {
