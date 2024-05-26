@@ -7,9 +7,18 @@ const crypto = require('crypto');
 require('dotenv').config();
 
 const route = require('./src/routes');
-const passportSetup = require('./src/utils/passport');
 
 const app = express();
+
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    methods: 'GET, POST, PUT, DELETE',
+    credentials: true,
+  })
+);
+
+app.use(express.json());
 
 app.use(
   session({
@@ -22,15 +31,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(
-  cors({
-    origin: 'http://localhost:3000',
-    methods: 'GET, POST, PUT, DELETE',
-    credentials: true,
-  })
-);
-
-app.use(express.json());
+require('./src/utils/passport');
 
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to Jewelry Store.' });

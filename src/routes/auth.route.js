@@ -1,21 +1,3 @@
-// const express = require('express');
-// const router = express.Router();
-// const AuthController = require('../app/controllers/auth.controller');
-
-// router.get('/login/success', (req, res) =>
-//   AuthController.loginSuccess(req, res)
-// );
-// router.get('/login/failed', (req, res) => AuthController.loginFailed(req, res));
-// router.get('/google', (req, res, next) =>
-//   AuthController.googleAuth(req, res, next)
-// );
-// router.get('/google/callback', (req, res, next) =>
-//   AuthController.googleCallback(req, res, next)
-// );
-// router.get('/logout', (req, res) => AuthController.logout(req, res));
-
-// module.exports = router;
-
 const express = require('express');
 const router = express.Router();
 const AuthController = require('../app/controllers/auth.controller');
