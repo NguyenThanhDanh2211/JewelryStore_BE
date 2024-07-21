@@ -30,7 +30,7 @@ class UserController {
       }).save();
 
       const message = `${process.env.BASE_URL}/user/verify/${newUser.id}/${token.token}`;
-      await sendEmail(newUser, 'Verify', message);
+      await sendEmail(email, 'Verify', message);
 
       res.send('An Email sent to your account please verify');
       // res.status(201).json({ message: 'Successful account sign up!' });

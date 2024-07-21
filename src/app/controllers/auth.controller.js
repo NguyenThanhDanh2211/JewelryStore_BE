@@ -1,7 +1,5 @@
 const passport = require('passport');
 
-const User = require('../models/user.model');
-
 class AuthController {
   googleAuth(req, res, next) {
     passport.authenticate('google', { scope: ['profile', 'email'] })(
