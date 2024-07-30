@@ -39,6 +39,29 @@ class UserController {
       res.status(500).json({ message: 'Account sign up failed!' });
     }
   }
+
+  async updateProfile(req, res) {
+    try {
+      const { email, name, address } = req.body;
+
+      const user = await User.findById(req.params.id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Update user fields
+      user.email = email;
+      user.name = name;
+      user.address = address;
+
+      await user.save();
+
+      res.status(200).json({ message: 'Profile updated successfully' });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: 'Error updating profile' });
+    }
+  }
 }
 
 module.exports = new UserController();
