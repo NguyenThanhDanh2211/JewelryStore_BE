@@ -93,6 +93,23 @@ class UserController {
       res.status(500).json({ message: 'Error updating profile' });
     }
   }
+
+  async aboutMe(req, res) {
+    try {
+      const userId = req.user.userId;
+      console.log('User ID:', userId);
+
+      const user = await User.findById(userId).select('-password'); // Exclude password
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.status(200).json(user);
+    } catch (error) {
+      console.log('Error fetching user details:', error);
+      res.status(500).json({ message: 'Failed to fetch user details' });
+    }
+  }
 }
 
 module.exports = new UserController();
