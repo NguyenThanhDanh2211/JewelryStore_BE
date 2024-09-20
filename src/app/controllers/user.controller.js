@@ -97,7 +97,6 @@ class UserController {
   async aboutMe(req, res) {
     try {
       const userId = req.user.userId;
-      console.log('User ID:', userId);
 
       const user = await User.findById(userId).select('-password'); // Exclude password
       if (!user) {
