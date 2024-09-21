@@ -14,7 +14,7 @@ class ProductController {
   async addProduct(req, res) {
     try {
       const {
-        idProduct,
+        productId,
         name,
         price,
         discount,
@@ -27,13 +27,13 @@ class ProductController {
         stoneSecond,
       } = req.body;
 
-      const existingProduct = await Product.findOne({ idProduct });
+      const existingProduct = await Product.findOne({ productId });
       if (existingProduct) {
         return res.status(400).json({ message: 'Product already exist!' });
       }
 
       await new Product({
-        idProduct,
+        productId,
         name,
         price,
         discount,
