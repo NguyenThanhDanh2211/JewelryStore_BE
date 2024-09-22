@@ -10,9 +10,11 @@ const cartSchema = new Schema({
         ref: 'Products',
         required: true,
       },
+      productName: { type: String },
       quantity: { type: Number, required: true, min: 1 },
-      productImg: { type: String },
+      productImg: [{ type: String }],
       productPrice: { type: Number },
+      itemTotalPrice: { type: Number },
     },
   ],
   totalQuantity: {
