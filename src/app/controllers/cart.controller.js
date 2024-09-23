@@ -163,7 +163,7 @@ class CartController {
       }
 
       const productIndex = cart.items.findIndex(
-        (item) => item.productId.toString() === productId
+        (item) => item.productId.toString() === productId._id
       );
 
       if (productIndex === -1) {
