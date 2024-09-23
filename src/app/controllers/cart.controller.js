@@ -101,7 +101,6 @@ class CartController {
     try {
       const userId = req.user.userId;
       const { productId, quantity } = req.body;
-      // console.log('productId: ', req.body.productId._id);
 
       const quantityNum = Number(quantity);
       if (!productId || isNaN(quantityNum) || quantityNum < 0) {
@@ -127,11 +126,14 @@ class CartController {
         cart.items.splice(itemIndex, 1);
       } else {
         cart.items[itemIndex].quantity = quantityNum;
+        // Calculate the total price for this item
+        cart.items[itemIndex].itemTotalPrice =
+          quantityNum * cart.items[itemIndex].productPrice;
       }
 
       // Recalculate the total price and total quantity of the cart
       cart.totalPrice = cart.items.reduce((total, item) => {
-        return total + item.quantity * item.productPrice;
+        return total + item.itemTotalPrice;
       }, 0);
 
       cart.totalQuantity = cart.items.reduce((total, item) => {
@@ -139,7 +141,6 @@ class CartController {
       }, 0);
 
       await cart.save();
-      // console.log('Updated cart:', cart);
 
       return res.status(200).json({
         message: 'Cart updated successfully!',
