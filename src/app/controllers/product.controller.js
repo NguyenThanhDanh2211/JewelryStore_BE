@@ -52,6 +52,21 @@ class ProductController {
       res.status(500).json({ message: 'Error adding product' });
     }
   }
+
+  async show(req, res) {
+    try {
+      const slug = req.params.slug;
+
+      const product = await Product.findOne({ slug });
+      if (!product) {
+        return res.status(404).json({ message: 'Product not found!' });
+      }
+
+      return res.status(200).json(product);
+    } catch (error) {
+      return res.status(500).json({ message: 'Server error', error });
+    }
+  }
 }
 
 module.exports = new ProductController();
