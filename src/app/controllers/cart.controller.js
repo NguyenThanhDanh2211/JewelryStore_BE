@@ -42,6 +42,7 @@ class CartController {
       const productPrice = product.price;
       const productImg = product.image;
       const productName = product.name;
+      const slug = product.slug;
 
       // Find or create the cart for the user
       let cart = await Cart.findOne({ userId });
@@ -70,6 +71,7 @@ class CartController {
           productId,
           quantity: quantityNum,
           productName,
+          slug,
           productImg,
           productPrice,
           itemTotalPrice: quantityNum * productPrice, // Calculate total price for this item

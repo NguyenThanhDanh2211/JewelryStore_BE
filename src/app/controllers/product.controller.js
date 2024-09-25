@@ -57,6 +57,8 @@ class ProductController {
     try {
       const slug = req.params.slug;
 
+      console.log(slug);
+
       const product = await Product.findOne({ slug });
       if (!product) {
         return res.status(404).json({ message: 'Product not found!' });
