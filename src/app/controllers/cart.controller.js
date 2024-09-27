@@ -25,26 +25,22 @@ class CartController {
 
       const quantityNum = Number(quantity);
 
-      // Validate input
       if (!productId || isNaN(quantityNum) || quantityNum <= 0) {
         return res
           .status(400)
           .json({ message: 'Missing or invalid product details' });
       }
 
-      // Find the product by its ID
       const product = await Product.findById(productId);
       if (!product) {
         return res.status(404).json({ message: 'Product not found' });
       }
 
-      // Extract product details
       const productPrice = product.price;
       const productImg = product.image;
       const productName = product.name;
       const slug = product.slug;
 
-      // Find or create the cart for the user
       let cart = await Cart.findOne({ userId });
       if (!cart) {
         cart = new Cart({
@@ -55,30 +51,26 @@ class CartController {
         });
       }
 
-      // Check if the product is already in the cart
       const existingItem = cart.items.find(
-        (item) => item.productId.toString() === productId
+        (item) => item.productId.toString() === productId._id
       );
 
       if (existingItem) {
-        // Update the quantity for the existing product
         existingItem.quantity += quantityNum;
         existingItem.itemTotalPrice =
-          existingItem.quantity * existingItem.productPrice; // Update total price for this item
+          existingItem.quantity * existingItem.productPrice;
       } else {
-        // Add a new product to the cart
         cart.items.push({
-          productId,
+          productId: productId,
           quantity: quantityNum,
           productName,
           slug,
           productImg,
           productPrice,
-          itemTotalPrice: quantityNum * productPrice, // Calculate total price for this item
+          itemTotalPrice: quantityNum * productPrice,
         });
       }
 
-      // Calculate total cart price and quantity
       cart.totalPrice = cart.items.reduce((total, item) => {
         return total + item.itemTotalPrice;
       }, 0);
