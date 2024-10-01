@@ -11,6 +11,71 @@ class ProductController {
     }
   }
 
+  async getFilteredProducts(req, res) {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      // Extracting filters from query parameters
+      const { category, tag, minPrice, maxPrice } = req.query;
+
+      // Building the filter object based on the provided query parameters
+      const filter = {};
+      if (category) {
+        filter.category = category; // Assuming category is a single value; use $in for multiple
+      }
+      if (tag) {
+        filter.tag = tag; // Assuming tag is a single value; use $in for multiple
+      }
+      if (minPrice || maxPrice) {
+        filter.price = {}; // Initialize price filter
+        if (minPrice) {
+          filter.price.$gte = parseFloat(minPrice); // Greater than or equal to minPrice
+        }
+        if (maxPrice) {
+          filter.price.$lte = parseFloat(maxPrice); // Less than or equal to maxPrice
+        }
+      }
+
+      const totalProducts = await Product.countDocuments(filter);
+      const products = await Product.find(filter).skip(skip).limit(limit);
+
+      res.json({
+        page,
+        limit,
+        totalProducts,
+        totalPages: Math.ceil(totalProducts / limit),
+        products,
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Server Error', error });
+    }
+  }
+
+  // async getLimitProduct(req, res) {
+  //   try {
+  //     const page = parseInt(req.query.page) || 1;
+  //     const limit = parseInt(req.query.limit) || 10;
+
+  //     const skip = (page - 1) * limit;
+
+  //     const totalProducts = await Product.countDocuments();
+
+  //     const products = await Product.find().skip(skip).limit(limit);
+
+  //     res.json({
+  //       page,
+  //       limit,
+  //       totalProducts,
+  //       totalPages: Math.ceil(totalProducts / limit),
+  //       products,
+  //     });
+  //   } catch (error) {
+  //     res.status(500).json({ message: 'Server Error', error });
+  //   }
+  // }
+
   async addProduct(req, res) {
     try {
       const {
@@ -20,7 +85,8 @@ class ProductController {
         discount,
         image,
         category,
-        brand,
+        tag,
+        description,
         gender,
         weight,
         stoneMain,
@@ -39,7 +105,8 @@ class ProductController {
         discount,
         image,
         category,
-        brand,
+        tag,
+        description,
         gender,
         weight,
         stoneMain,

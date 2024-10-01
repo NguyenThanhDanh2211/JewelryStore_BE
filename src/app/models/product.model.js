@@ -11,20 +11,13 @@ const productSchema = new Schema({
   discount: { type: Number },
   image: [{ type: String }],
   category: { type: String },
-  brand: { type: String },
+  tag: { type: String },
+  description: { type: String },
   gender: { type: String },
   weight: { type: String },
   stoneMain: { type: String },
   stoneSecond: { type: String },
 });
-
-// // Middleware tạo slug trước khi lưu sản phẩm
-// productSchema.pre('save', function (next) {
-//   if (this.name) {
-//     this.slug = slugify(this.name, { lower: true, strict: true });
-//   }
-//   next();
-// });
 
 // Middleware để tạo slug trước khi lưu sản phẩm
 productSchema.pre('save', async function (next) {
