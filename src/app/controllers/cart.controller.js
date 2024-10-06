@@ -186,6 +186,21 @@ class CartController {
       return res.status(500).json({ message: 'Internal server error' });
     }
   }
+
+  async deleteAll(req, res) {
+    const userId = req.user.userId;
+
+    try {
+      await Cart.deleteMany({ userId });
+
+      return res.status(200).json({ message: 'All products removed.' });
+    } catch (error) {
+      console.log('Error deleting all products', error);
+      return res
+        .status(500)
+        .json({ message: 'Error deleting all products', error });
+    }
+  }
 }
 
 module.exports = new CartController();

@@ -19,18 +19,15 @@ const productSchema = new Schema({
   stoneSecond: { type: String },
 });
 
-// Middleware để tạo slug trước khi lưu sản phẩm
 productSchema.pre('save', async function (next) {
   if (this.name) {
     let baseSlug = slugify(this.name, { lower: true, strict: true });
     let slug = baseSlug;
     let count = 1;
 
-    // Kiểm tra xem slug đã tồn tại trong cơ sở dữ liệu chưa
     const productModel = mongoose.model('Products', productSchema);
     let existingProduct = await productModel.findOne({ slug });
 
-    // Nếu tồn tại, thêm số vào sau slug cho đến khi không trùng lặp
     while (existingProduct) {
       slug = `${baseSlug}-${count}`;
       existingProduct = await productModel.findOne({ slug });

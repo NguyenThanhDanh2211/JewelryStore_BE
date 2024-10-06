@@ -73,21 +73,22 @@ class UserController {
 
   async updateProfile(req, res) {
     try {
-      const { email, name, address } = req.body;
+      const userId = req.user.userId;
+      const { email, name, address, phone } = req.body;
 
-      const user = await User.findById(req.params.id);
+      const user = await User.findById(userId);
       if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        return res.status(404).json({ message: 'User not found.' });
       }
 
-      // Update user fields
-      user.email = email;
       user.name = name;
+      user.email = email;
+      user.phone = phone;
       user.address = address;
 
       await user.save();
 
-      res.status(200).json({ message: 'Profile updated successfully' });
+      res.status(200).json({ message: 'Profile updated successfully!' });
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: 'Error updating profile' });
