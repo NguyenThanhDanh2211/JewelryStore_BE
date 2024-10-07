@@ -26,11 +26,11 @@ const multer = require('multer');
 
 const storage = multer.diskStorage({
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname); // Đặt tên file duy nhất
+    cb(null, Date.now() + '-' + file.originalname);
   },
 });
 
-const upload = multer({ storage: storage }).array('images', 12); // Cho phép tối đa 12 ảnh
+const upload = multer({ storage: storage }).array('images', 12);
 
 const uploadMiddleware = (req, res, next) => {
   upload(req, res, (err) => {

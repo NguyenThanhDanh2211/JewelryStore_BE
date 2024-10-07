@@ -149,8 +149,13 @@ class ProductController {
 
       const imageUrls = await Promise.all(
         req.files.map(async (file) => {
-          const imageUrl = await uploadImage(file.path);
-          return imageUrl;
+          try {
+            const imageUrl = await uploadImage(file.path);
+            return imageUrl;
+          } catch (uploadError) {
+            console.error('Error uploading image:', uploadError);
+            throw new Error('Image upload failed');
+          }
         })
       );
 
