@@ -35,6 +35,23 @@ class DiscountController {
       return res.status(500).json({ message: 'Error getting all discount' });
     }
   }
+
+  async del(req, res) {
+    try {
+      const discountId = req.params.id;
+
+      const deletedDiscount = await Discount.findByIdAndDelete(discountId);
+
+      if (!deletedDiscount) {
+        return res.status(404).json({ message: 'Discount not found' });
+      }
+
+      res.status(200).json({ message: 'Discount deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting discount:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  }
 }
 
 module.exports = new DiscountController();

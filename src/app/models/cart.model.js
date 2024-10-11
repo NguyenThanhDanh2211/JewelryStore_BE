@@ -12,6 +12,7 @@ const cartSchema = new Schema({
       },
       slug: { type: String },
       productName: { type: String },
+      category: { type: String },
       quantity: { type: Number, required: true, min: 1 },
       productImg: [{ type: String }],
       productPrice: { type: Number },

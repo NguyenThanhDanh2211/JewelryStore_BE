@@ -13,45 +13,25 @@ class ProductController {
     }
   }
 
-  async getFilteredProducts(req, res) {
-    try {
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 10;
-      const skip = (page - 1) * limit;
+  // async getProductByCategory(req, res) {
+  //   try {
+  //     const { category } = req.params;
+  //     const { collect } = req.query;
 
-      const { category, tag, minPrice, maxPrice } = req.query;
+  //     let filter = { category: new RegExp(`^${category}$`, 'i') };
 
-      const filter = {};
-      if (category) {
-        filter.category = category;
-      }
-      if (tag) {
-        filter.tag = tag;
-      }
-      if (minPrice || maxPrice) {
-        filter.price = {};
-        if (minPrice) {
-          filter.price.$gte = parseFloat(minPrice);
-        }
-        if (maxPrice) {
-          filter.price.$lte = parseFloat(maxPrice);
-        }
-      }
+  //     if (collect && collect !== 'null') {
+  //       filter.collect = new RegExp(collect, 'i');
+  //     }
 
-      const totalProducts = await Product.countDocuments(filter);
-      const products = await Product.find(filter).skip(skip).limit(limit);
+  //     const products = await Product.find(filter);
 
-      res.json({
-        page,
-        limit,
-        totalProducts,
-        totalPages: Math.ceil(totalProducts / limit),
-        products,
-      });
-    } catch (error) {
-      res.status(500).json({ message: 'Server Error', error });
-    }
-  }
+  //     res.json(products);
+  //   } catch (error) {
+  //     console.log('Error fetching products', error);
+  //     res.status(500).json({ message: 'Internal server error' });
+  //   }
+  // }
 
   // async getLimitProduct(req, res) {
   //   try {
@@ -76,55 +56,77 @@ class ProductController {
   //   }
   // }
 
-  ////////////// 1 anh
-  // async addProduct(req, res) {
-  //   try {
-  //     const {
-  //       productId,
-  //       name,
-  //       price,
-  //       discount,
-  //       category,
-  //       tag,
-  //       description,
-  //       gender,
-  //       weight,
-  //       stoneMain,
-  //       stoneSecond,
-  //     } = req.body;
-
-  //     const existingProduct = await Product.findOne({ productId });
-  //     if (existingProduct) {
-  //       return res.status(400).json({ message: 'Product already exists!' });
-  //     }
-
-  //     const imageUrl = await uploadImage(req);
-
-  //     const newProduct = new Product({
-  //       productId,
-  //       name,
-  //       price,
-  //       discount,
-  //       image: imageUrl,
-  //       category,
-  //       tag,
-  //       description,
-  //       gender,
-  //       weight,
-  //       stoneMain,
-  //       stoneSecond,
-  //     });
-
-  //     await newProduct.save();
-  //     return res.status(201).send('Product added successfully!');
-  //   } catch (error) {
-  //     console.log('Error:', error);
-  //     return res.status(500).json({ message: 'Error adding product' });
-  //   }
-  // }
-  //////////////
-
   ///////////////////////////
+
+  async getFilteredProducts(req, res) {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      const { category } = req.params;
+      const { collect, tag, men, minPrice, maxPrice, sort } = req.query;
+
+      const filter = {};
+
+      if (men !== undefined) {
+        filter.men = men === 'true';
+      }
+
+      if (category && category !== 'men-jewelry') {
+        filter.category = new RegExp(`^${category}$`, 'i');
+      }
+
+      if (collect) {
+        filter.collect = collect;
+      }
+      if (tag) {
+        filter.tag = tag;
+      }
+      if (minPrice || maxPrice) {
+        filter.price = {};
+        if (minPrice) {
+          filter.price.$gte = parseFloat(minPrice);
+        }
+        if (maxPrice) {
+          filter.price.$lte = parseFloat(maxPrice);
+        }
+      }
+
+      let sortOption = {};
+      if (sort) {
+        switch (sort) {
+          case 'Price: Low to High':
+            sortOption.price = 1;
+            break;
+          case 'Price: High to Low':
+            sortOption.price = -1;
+            break;
+          case 'Newest Arrivals':
+            sortOption._id = -1;
+            break;
+          default:
+            break;
+        }
+      }
+
+      const totalProducts = await Product.countDocuments(filter);
+      const products = await Product.find(filter)
+        .sort(sortOption)
+        .skip(skip)
+        .limit(limit);
+
+      res.json({
+        page,
+        limit,
+        totalProducts,
+        totalPages: Math.ceil(totalProducts / limit),
+        products,
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Server Error', error });
+    }
+  }
 
   async addProduct(req, res) {
     try {
@@ -134,13 +136,16 @@ class ProductController {
         price,
         discount,
         category,
+        collect,
         tag,
         description,
-        gender,
         weight,
         stoneMain,
         stoneSecond,
       } = req.body;
+
+      const men =
+        req.body.men === 'true' || req.body.men === true ? true : false;
 
       const existingProduct = await Product.findOne({ productId });
       if (existingProduct) {
@@ -166,9 +171,10 @@ class ProductController {
         discount,
         image: imageUrls,
         category,
+        men,
+        collect,
         tag,
         description,
-        gender,
         weight,
         stoneMain,
         stoneSecond,

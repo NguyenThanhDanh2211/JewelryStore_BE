@@ -40,6 +40,7 @@ class CartController {
       const productImg = product.image;
       const productName = product.name;
       const slug = product.slug;
+      const category = product.category;
 
       let cart = await Cart.findOne({ userId });
       if (!cart) {
@@ -65,6 +66,7 @@ class CartController {
           quantity: quantityNum,
           productName,
           slug,
+          category,
           productImg,
           productPrice,
           itemTotalPrice: quantityNum * productPrice,
