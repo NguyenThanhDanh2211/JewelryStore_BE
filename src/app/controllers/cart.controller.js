@@ -7,8 +7,8 @@ class CartController {
       const userId = req.user.userId;
 
       const cart = await Cart.findOne({ userId }).populate('items.productId');
-      if (!cart) {
-        return res.status(400).json({ message: 'Cart not found' });
+      if (!cart || cart.items.length === 0) {
+        return res.status(200).json({ message: 'Cart is empty', items: [] });
       }
 
       return res.status(200).json(cart);

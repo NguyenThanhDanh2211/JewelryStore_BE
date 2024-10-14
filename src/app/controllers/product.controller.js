@@ -139,9 +139,7 @@ class ProductController {
         collect,
         tag,
         description,
-        weight,
-        stoneMain,
-        stoneSecond,
+        detail,
       } = req.body;
 
       const men =
@@ -175,9 +173,7 @@ class ProductController {
         collect,
         tag,
         description,
-        weight,
-        stoneMain,
-        stoneSecond,
+        detail,
       });
 
       await newProduct.save();

@@ -5,6 +5,7 @@ const cartRouter = require('./cart.route');
 const discountRouter = require('./discount.route');
 const orderRouter = require('./order.route');
 const paymentRouter = require('./payment.route');
+const cmtRouter = require('./cmt.route');
 
 function route(app) {
   app.use('/user', userRouter);
@@ -14,6 +15,7 @@ function route(app) {
   app.use('/discount', discountRouter);
   app.use('/order', orderRouter);
   app.use('/payment', paymentRouter);
+  app.use('/cmt', cmtRouter);
 }
 
 module.exports = route;

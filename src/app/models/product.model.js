@@ -15,9 +15,7 @@ const productSchema = new Schema({
   collect: { type: String },
   tag: { type: String },
   description: { type: String },
-  weight: { type: String },
-  stoneMain: { type: String },
-  stoneSecond: { type: String },
+  detail: { type: String },
 });
 
 productSchema.pre('save', async function (next) {

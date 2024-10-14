@@ -40,4 +40,7 @@ app.get('/', (req, res) => {
 
 route(app);
 
+// const used = process.memoryUsage().heapUsed / 1024 / 1024;
+// console.log(`Memory Usage: ${used} MB`);
+
 module.exports = app;
