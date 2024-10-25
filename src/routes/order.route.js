@@ -9,6 +9,6 @@ router.get('/get-order', authMiddleware, OrderController.getUserOrders);
 router.put('/cancel/:orderId', authMiddleware, OrderController.cancelOrder);
 
 router.get('/admin/get-all', OrderController.getAllOrders);
-router.put('/admin/order-status', OrderController.updateOrderStatus);
+router.put('/admin/order-status/:orderId', OrderController.updateOrderStatus);
 
 module.exports = router;

@@ -81,8 +81,6 @@ class OrderController {
 
       const order = await Order.findOne({ _id: orderId, userId });
 
-      console.log(order);
-
       if (!order) {
         return res.status(404).json({ message: 'Order not found' });
       }
@@ -121,7 +119,8 @@ class OrderController {
 
   async updateOrderStatus(req, res) {
     try {
-      const { orderId, status } = req.body;
+      const { orderId } = req.params;
+      const { status } = req.body;
       const validStatuses = ['pending', 'shipped', 'delivered', 'cancelled'];
       if (!validStatuses.includes(status)) {
         return res.status(400).json({ message: 'Invalid status value' });
