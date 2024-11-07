@@ -142,6 +142,96 @@ class OrderController {
       return res.status(500).json({ message: 'Internal server error' });
     }
   }
+
+  async getDailyStats(req, res) {
+    try {
+      const start = new Date();
+      start.setHours(0, 0, 0, 0);
+      const end = new Date();
+      end.setHours(23, 59, 59, 999);
+
+      const ordersToday = await Order.find({
+        orderDate: { $gte: start, $lte: end },
+      });
+
+      const totalOrdersToday = ordersToday.length;
+      const revenueToday = ordersToday.reduce(
+        (acc, order) => acc + order.finalPrice,
+        0
+      );
+
+      res.status(200).json({
+        totalOrdersToday,
+        revenueToday,
+      });
+    } catch (error) {
+      console.log('Error fetching daily stats', error);
+      res
+        .status(500)
+        .json({ message: 'Internal server error - ERROR DAILY STATS' });
+    }
+  }
+
+  async getMonthlyStats(req, res) {
+    try {
+      const start = new Date(
+        new Date().getFullYear(),
+        new Date().getMonth(),
+        1
+      );
+      const end = new Date(
+        new Date().getFullYear(),
+        new Date().getMonth() + 1,
+        0
+      );
+
+      const ordersThisMonth = await Order.find({
+        orderDate: { $gte: start, $lte: end },
+      });
+
+      const totalOrdersThisMonth = ordersThisMonth.length;
+      const revenueThisMonth = ordersThisMonth.reduce(
+        (acc, order) => acc + order.finalPrice,
+        0
+      );
+
+      res.status(200).json({ totalOrdersThisMonth, revenueThisMonth });
+    } catch (error) {
+      console.log('Error fetching monthly stats', error);
+      res
+        .status(500)
+        .json({ message: 'Internal server error - ERROR MONTHLY STATS' });
+    }
+  }
+
+  async getChartData(req, res) {
+    try {
+      const orders = await Order.aggregate([
+        {
+          $match: {
+            orderDate: {
+              $gte: new Date(new Date().setMonth(new Date().getMonth() - 12)),
+            },
+          },
+        },
+        {
+          $group: {
+            _id: { $dateToString: { format: '%Y-%m', date: '$orderDate' } },
+            totalOrders: { $sum: 1 },
+            revenue: { $sum: '$finalPrice' },
+          },
+        },
+        {
+          $sort: { _id: 1 },
+        },
+      ]);
+
+      res.status(200).json(orders);
+    } catch (error) {
+      console.error('Error fetching chart data:', error);
+      res.status(500).json({ message: 'Error fetching chart data' });
+    }
+  }
 }
 
 module.exports = new OrderController();

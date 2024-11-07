@@ -11,4 +11,8 @@ router.put('/cancel/:orderId', authMiddleware, OrderController.cancelOrder);
 router.get('/admin/get-all', OrderController.getAllOrders);
 router.put('/admin/order-status/:orderId', OrderController.updateOrderStatus);
 
+router.get('/stats/daily', OrderController.getDailyStats);
+router.get('/stats/monthly', OrderController.getMonthlyStats);
+router.get('/stats/chart', OrderController.getChartData);
+
 module.exports = router;
