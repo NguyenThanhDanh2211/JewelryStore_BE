@@ -10,10 +10,12 @@ router.get(
   ProductController.getFilteredProducts
 );
 // router.get('/get/:category', ProductController.getProductByCategory);
+router.get('/discounted', ProductController.getProductDiscounted);
 
 router.post('/add-product', multerMiddleware, ProductController.addProduct);
 router.get('/search', ProductController.search);
 router.get('/:category/:slug', ProductController.show);
 router.get('/:slug', ProductController.show);
+router.put('/products/:slug', ProductController.updateProduct);
 
 module.exports = router;

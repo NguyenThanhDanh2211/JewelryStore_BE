@@ -9,6 +9,7 @@ const productSchema = new Schema({
   slug: { type: String, unique: true },
   price: { type: Number },
   discount: { type: Number },
+  finalPrice: { type: Number },
   image: [{ type: String }],
   category: { type: String },
   men: { type: Boolean, default: false },

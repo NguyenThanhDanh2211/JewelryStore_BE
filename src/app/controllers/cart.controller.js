@@ -36,7 +36,8 @@ class CartController {
         return res.status(404).json({ message: 'Product not found' });
       }
 
-      const productPrice = product.price;
+      // Lấy giá cuối cùng (áp dụng giảm giá nếu có)
+      const finalPrice = product.finalPrice || product.price;
       const productImg = product.image;
       const productName = product.name;
       const slug = product.slug;
@@ -53,13 +54,12 @@ class CartController {
       }
 
       const existingItem = cart.items.find(
-        (item) => item.productId.toString() === productId._id
+        (item) => item.productId.toString() === productId
       );
 
       if (existingItem) {
         existingItem.quantity += quantityNum;
-        existingItem.itemTotalPrice =
-          existingItem.quantity * existingItem.productPrice;
+        existingItem.itemTotalPrice = existingItem.quantity * finalPrice;
       } else {
         cart.items.push({
           productId: productId,
@@ -68,11 +68,12 @@ class CartController {
           slug,
           category,
           productImg,
-          productPrice,
-          itemTotalPrice: quantityNum * productPrice,
+          productPrice: finalPrice, // Giá áp dụng
+          itemTotalPrice: quantityNum * finalPrice, // Tổng giá sản phẩm
         });
       }
 
+      // Cập nhật tổng giá và tổng số lượng
       cart.totalPrice = cart.items.reduce((total, item) => {
         return total + item.itemTotalPrice;
       }, 0);

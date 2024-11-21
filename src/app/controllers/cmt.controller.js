@@ -40,10 +40,17 @@ class CommentController {
         return res.status(204).json({
           message:
             'No comments found for this product. Be the first to leave a comment!',
+          totalComments: 0,
+          averageRating: 0,
         });
       }
 
-      res.status(200).json(comments);
+      const totalComments = comments.length;
+      const averageRating =
+        comments.reduce((sum, comment) => sum + comment.rating, 0) /
+        totalComments;
+
+      res.status(200).json(comments, totalComments, averageRating);
     } catch (error) {
       res.status(500).json({ message: 'Server error', error });
     }
