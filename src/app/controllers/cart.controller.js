@@ -36,7 +36,6 @@ class CartController {
         return res.status(404).json({ message: 'Product not found' });
       }
 
-      // Lấy giá cuối cùng (áp dụng giảm giá nếu có)
       const finalPrice = product.finalPrice || product.price;
       const productImg = product.image;
       const productName = product.name;
@@ -54,7 +53,7 @@ class CartController {
       }
 
       const existingItem = cart.items.find(
-        (item) => item.productId.toString() === productId
+        (item) => item.productId.toString() === productId._id
       );
 
       if (existingItem) {
@@ -73,7 +72,6 @@ class CartController {
         });
       }
 
-      // Cập nhật tổng giá và tổng số lượng
       cart.totalPrice = cart.items.reduce((total, item) => {
         return total + item.itemTotalPrice;
       }, 0);
