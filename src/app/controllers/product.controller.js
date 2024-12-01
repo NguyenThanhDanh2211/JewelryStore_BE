@@ -1,4 +1,5 @@
 const Product = require('../models/product.model');
+const { spawn } = require('child_process');
 
 const { uploadImage } = require('../../utils/cloudinary');
 
@@ -272,6 +273,62 @@ class ProductController {
       console.log('Error updating product: ', error);
       return res.status(500).json({ message: 'Error updating product', error });
     }
+  }
+
+  async getRecommendationsByItem(req, res) {
+    const { productId } = req.params;
+
+    // Call Python script and pass id as argument
+    const pythonProcess = spawn('python', [
+      './scripts/recommendation.py',
+      productId,
+    ]);
+
+    let data = '';
+
+    pythonProcess.stdout.on('data', (chunk) => {
+      data += chunk.toString();
+    });
+
+    pythonProcess.stderr.on('data', (chunk) => {
+      console.error('Python error:', chunk.toString());
+    });
+
+    pythonProcess.on('close', async (code) => {
+      if (code === 0) {
+        try {
+          // Log the complete data from Python after closing to ensure full data capture
+          // console.log('Data received from Python script:', data.trim());
+
+          // Clean single quotes and prepare JSON-compatible string
+          let cleanedData = data.trim();
+
+          // Check if the cleaned data is valid JSON
+          try {
+            const recommendedProductIDs = JSON.parse(cleanedData);
+
+            // Fetch product details from MongoDB
+            const recommendedProducts = await Product.find({
+              productId: { $in: recommendedProductIDs },
+            });
+
+            res.status(200).json({ recommendedProducts });
+          } catch (jsonError) {
+            console.error('Error parsing JSON:', jsonError);
+            res
+              .status(500)
+              .json({ message: 'Failed to parse JSON from Python script' });
+          }
+        } catch (error) {
+          console.error('Error fetching product details:', error);
+          res
+            .status(500)
+            .json({ message: 'Failed to retrieve product details' });
+        }
+      } else {
+        res.status(500).json({ message: 'Recommendation failed' });
+      }
+    });
   }
 }
 

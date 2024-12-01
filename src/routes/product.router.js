@@ -11,6 +11,10 @@ router.get(
 );
 // router.get('/get/:category', ProductController.getProductByCategory);
 router.get('/discounted', ProductController.getProductDiscounted);
+router.get(
+  '/getRecommendations/:productId',
+  ProductController.getRecommendationsByItem
+);
 
 router.post('/add-product', multerMiddleware, ProductController.addProduct);
 router.get('/search', ProductController.search);
